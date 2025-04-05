@@ -77,6 +77,12 @@ class State:
     def __init__(self, game: Game, canvas_size: list[int]):
         self.game = game
 
+    def add_state(self):
+        self.game.__states.append(self)
+
+    def remove_state(self):
+        self.game.__states.pop()
+
     def update(self, deltatime: int):
         pass
 
