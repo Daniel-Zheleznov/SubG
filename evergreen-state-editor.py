@@ -1,4 +1,4 @@
-import lib_editor
+from evergreen_tools import editor
 
 print("Evergreen state editor (CLI)")
 print("----------------------------\n")
@@ -9,13 +9,14 @@ print("[0] - Quit state editor.\n")
 
 choice = input("Choice: ").strip()
 if choice == "1":
-    lib_editor.create_new()
+    editor.create_new()
 
 elif choice == "2":
     pass
 
 elif choice == "0":
-    pass
+    print("Goodbye, my friend.")
+    editor.time.sleep(1)
 
 else:
     pass

@@ -1,6 +1,6 @@
 import os
 import time
-import json
+from . import save_data
 
 def check_valid(string):
     i = 0
@@ -58,38 +58,10 @@ def shell(state_name:str, state_map = None):
                 continue
 
             # doing it
-            state_map[(int(cmdline[1][1])*90) + int(cmdline[1][0])] = cmdline[2].lower()
+            state_map[(int(cmdline[1][1])*160) + int(cmdline[1][0])] = cmdline[2].lower()
 
         if cmd.lower() == 's':
-            with open(f"custom_states/{state_name}.json", "w+") as json_file:
-                print(f"Saving to custom_states/{state_name}.json")
-                json.dump({"map": state_map}, json_file)
-                print(f"Saved to custom_states/{state_name}.json")
-
-            with open(f"custom_states/{state_name}.py", "w+") as file:
-                print(f"Saving to custom_states/{state_name}.py")
-
-                file.write("from evergreen import *\nfrom json import loads\n\n")
-                file.write(f"class {state_name}(State):\n")
-                file.write("\tdef __init__(self, game: Game, canvas_size: list[int], player):\n")
-                file.write("\t\tsuper().__init__(game, canvas_size)\n\t\tself.player = player\n\n")
-                file.write(f"\t\tself.data = []\n")
-                file.write(f"\t\twith open('custom_states/{state_name}.json', 'r') as map_file:\n")
-                file.write(f"\t\t\tself.data = loads(map_file.readlines())\n")
-                file.write(f"\t\t\tmap_file.close()\n\n")
-                
-                file.write(f"\tdef update(self, deltatime: int):\n")
-                file.write(f"\t\tpass\n\n")
-                
-                file.write(f"\tdef draw(self, canvas: pygame.Surface):\n")
-                file.write(f"\t\tx, y: int = 0, 0\n")
-                file.write(f"\t\ttile_count: int = 0\n")
-                file.write(f"\t\twhile tile_count < (160*90):\n")
-                file.write(f"\t\t\tpass\n")
-
-                # TODO {DANIEL ZHELEZNOV}: MAKE A WAY FOR THE PLAYER TO SEE IF THEY ARE OVER OIL/NEAR FOREIGN
-
-                print(f"Saved to custom_states/{state_name}.py")
+            save_data.save(state_name, state_map)
 
         if cmd.lower() == 'd':
             x, y = 0, 0

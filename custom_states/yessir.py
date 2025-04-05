@@ -1,13 +1,13 @@
 from evergreen import *
 from json import loads
 
-class t(State):
+class yessir(State):
 	def __init__(self, game: Game, canvas_size: list[int], player):
 		super().__init__(game, canvas_size)
 		self.player = player
 
 		self.data = []
-		with open('custom_states/t.json', 'r') as map_file:
+		with open('custom_states/yessir.json', 'r') as map_file:
 			self.data = loads(map_file.readlines())
 			map_file.close()
 
