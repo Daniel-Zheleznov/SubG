@@ -9,7 +9,14 @@ class Player:
         self.ammo = ammo
         self.guided = guided
         self.health = health
-    def Movment(self,left,right):
+        self.Ifnearoil=False
+        self.Ifnearenemy=False
+        self.Ifnearforeign=False
+        self.Game = game  # store game reference
+        self.angle = 270  # Facing "up" by default
+        self.position = pygame.Vector2(100, 100)  # Starting positio
+
+    def Movment(self,left,right,up,down):
         interaction=False
         movment
         if self.tpye==pygame.QUIT:  
@@ -32,14 +39,38 @@ class Player:
         if self.type == pygame.KEYDOWN:
             if self.key == pygame.K_ESCAPE:
                 print("Nothing bad happened")
-    def playerdraw(self):
+    def playerdraw(self,surface):
         oval_color = (255, 255, 0)  # Yellow 
         oval_x = 100
         oval_y = 100
         oval_width = 25
         oval_height = 75
+        
     def interaction(self):
+        #random drop with either fuel or speed but significantly less value 
+        if(self.Game.actions["INTERACT"]):
+            True
+        if (self.Ifnearenemy):   #update value
+            self.fuel += 0.01
+        elif (self.Ifnearoil):
+        #update value
+               self.speed += 0.01
+        elif (self.Ifnearforeign):
+        #update value
+           if random.choice([True, False]):
+            self.fuel += 0.1
+        else:
+            self.speed += 0.1
+    def aim(self,surface):
+     #draw line infront of player
+    # Dotted line parameters
+        direction = pygame.Vector2(1, 0).rotate(-self.angle)  # Rotate clockwise
+        dot_spacing = 10
+        dot_length = 5
+        num_dots = 15
+        for i in range(num_dots):
+            start = self.position + direction * i * (dot_length + dot_spacing)
+        end = start + direction * dot_length
+        pygame.draw.line(surface, (255, 255, 255), start, end, 2)
 
-        if(self.Game.actions["Interact"]):
-            print("my nits on your chin")
-            
+   
