@@ -29,6 +29,7 @@ def shell(state_name:str, state_map = None):
 
     if state_map is None:
         state_map = ['n' for i in range(160*90)]
+        state_map.append('n')
 
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"Evergreen level editor shell\n\n{state_name}")
