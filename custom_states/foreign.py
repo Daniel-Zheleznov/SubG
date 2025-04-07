@@ -1,6 +1,6 @@
 import pygame
 
-FOREIGN_SUB_TYPE      = 0
+FOREIGN_OUTPOST_BROKEN      = 0
 FOREIGN_OUTPOST_TYPE  = 2
 
 class Foreign:
@@ -11,10 +11,13 @@ class Foreign:
 
         self.width = self.height = 5
 
-        self.outpost_img = pygame.image.load("custom_states\\assets\\outpost.png")
+        if self.type == FOREIGN_OUTPOST_TYPE:
+            self.image = pygame.image.load("custom_states\\assets\\outpost.png")
+        else:
+            self.image = pygame.image.load("custom_states\\assets\\outpost-broken.png")
 
     def render(self, canvas: pygame.Surface):
-        canvas.blit(self.outpost_img, (self.x, self.y))
+        canvas.blit(self.image, (self.x, self.y))
 
     def update(self, dt):
         pass

@@ -20,7 +20,7 @@ def generate_objects(count: int, spawn_data: list[list[str, str]]):
 	for i in range(count):
 		index = random.randint(0, len(spawn_data)-1)
 		spawn = spawn_data[index]
-		objects.append(foreign.Foreign(spawn[0], spawn[1], random.choice([foreign.FOREIGN_SUB_TYPE, foreign.FOREIGN_OIL_TYPE, foreign.FOREIGN_OUTPOST_TYPE])))
+		objects.append(foreign.Foreign(spawn[0], spawn[1], foreign.FOREIGN_OUTPOST_TYPE))
 
 	return objects
 
