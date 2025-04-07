@@ -33,7 +33,7 @@ def cmd_help():
     print("                      p - Player spawn point")
     print("                      n - Nothing/Base")
 
-def shell(state_name:str, state_map = None, enemy_spawns = None, enemy_count = None):
+def shell(state_name:str, state_map = None, enemy_spawns = None, enemy_count = None, foreign_spawns = None, foreign_count = None):
     running = True
 
     if state_map is None:
@@ -45,6 +45,12 @@ def shell(state_name:str, state_map = None, enemy_spawns = None, enemy_count = N
     
     if enemy_count is None:
         enemy_count = 0
+
+    if foreign_spawns is None:
+        foreign_spawns = []
+    
+    if foreign_count is None:
+        foreign_count = 0
 
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"Evergreen level editor shell\n\n{state_name}")
@@ -77,10 +83,13 @@ def shell(state_name:str, state_map = None, enemy_spawns = None, enemy_count = N
             if cmdline[2].lower() == 'e':
                 enemy_spawns.append([int(cmdline[1][0]), int(cmdline[1][1])])
 
+            if cmdline[2].lower() == 'f':
+                foreign_spawns.append([int(cmdline[1][0]), int(cmdline[1][1])])
+
             state_map[(int(cmdline[1][1])*160) + int(cmdline[1][0])] = cmdline[2].lower()
 
         if cmd.lower() == 's':
-            save_data.save(state_name, state_map, enemy_spawns, enemy_count)
+            save_data.save(state_name, state_map, enemy_spawns, enemy_count, foreign_spawns, foreign_count)
 
         if cmd.lower() == 'd':
             x, y = 0, 0
@@ -122,6 +131,11 @@ def create_new():
         time.sleep(1)
         create_new()
 
+    foreign_count = input("Foreign count: ")
+    if check_valid_int(foreign_count) == False:
+        print("Retry. Invalid foreign count")
+        time.sleep(1)
+        create_new()
 
-    shell(state_name, enemy_count=enemy_count)
+    shell(state_name, enemy_count=enemy_count, foreign_count=foreign_count)
     

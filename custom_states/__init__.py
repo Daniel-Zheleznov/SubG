@@ -1,6 +1,7 @@
 from evergreen import *
 from json import loads
 from . import enemy
+from . import foreign
 import random
 
 def generate_enemies(count: int, spawn_data: list[list[str, str]]):
@@ -13,9 +14,20 @@ def generate_enemies(count: int, spawn_data: list[list[str, str]]):
 
 	return enemies
 
+def generate_objects(count: int, spawn_data: list[list[str, str]]):
+	objects = []
+
+	for i in range(count):
+		index = random.randint(0, len(spawn_data)-1)
+		spawn = spawn_data[index]
+		objects.append(foreign.Foreign(spawn[0], spawn[1], random.choice([foreign.FOREIGN_SUB_TYPE, foreign.FOREIGN_OIL_TYPE, foreign.FOREIGN_OUTPOST_TYPE])))
+
+	return objects
+
 class TestState(State):
 	def __init__(self, game: Game, player):
-		self.ENEMY_COUNT = 5
+		self.ENEMY_COUNT = 2
+		self.FOREIGN_COUNT = 2
 
 		super().__init__(game)
 		self.player = player
@@ -24,8 +36,12 @@ class TestState(State):
 		with open('custom_states/TestState.json', 'r') as map_file:
 			self.data = loads(''.join(map_file.readlines()))
 			map_file.close()
+
 		enemy_spawn_data = self.data['enemy_spawn_data']
 		self.enemy_data = generate_enemies(self.ENEMY_COUNT, enemy_spawn_data)
+
+		foreign_spawn_data = self.data['foreign_spawn_data']
+		self.foreign_data = generate_objects(self.FOREIGN_COUNT, foreign_spawn_data)
 
 		self.data = self.data['map']
 
@@ -62,5 +78,12 @@ class TestState(State):
 				x = 0
 
 			tile_count += 1
+
 		enemy_entity: enemy.Enemy
-		for enemy_entity in self.enemy_data:			enemy_entity.draw(canvas)
+		for enemy_entity in self.enemy_data:
+			enemy_entity.draw(canvas)
+
+		foreign_entity: foreign.Foreign
+		for foreign_entity in self.foreign_data:
+			foreign_entity.render(canvas)
+

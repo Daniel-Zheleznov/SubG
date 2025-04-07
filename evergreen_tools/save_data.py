@@ -1,9 +1,9 @@
 from json import dump
 
-def save(state_name, state_map, enemy_spawns, enemy_count):
+def save(state_name, state_map, enemy_spawns, enemy_count, foreign_spawns, foreign_count):
     with open(f"custom_states/{state_name}.json", "w+") as json_file:
         print(f"Saving to custom_states/{state_name}.json")
-        dump({"enemy_spawn_data": enemy_spawns, "map": state_map}, json_file)
+        dump({"enemy_spawn_data": enemy_spawns, "foreign_spawn_data": foreign_spawns, "map": state_map}, json_file)
         print(f"Saved to custom_states/{state_name}.json")
 
     with open(f"custom_states/__init__.py", "a+") as file:
@@ -11,15 +11,24 @@ def save(state_name, state_map, enemy_spawns, enemy_count):
 
         file.write(f"\nclass {state_name}(State):\n")
         file.write("\tdef __init__(self, game: Game, player):\n")
-        file.write(f"\t\tself.ENEMY_COUNT = {enemy_count}\n\n")
+        file.write(f"\t\tself.ENEMY_COUNT = {enemy_count}\n")
+        file.write(f"\t\tself.FOREIGN_COUNT = {foreign_count}\n\n")
+
         file.write("\t\tsuper().__init__(game)\n\t\tself.player = player\n\n")
+
         file.write(f"\t\tself.data = []\n")
         file.write(f"\t\twith open('custom_states/{state_name}.json', 'r') as map_file:\n")
         file.write(f"\t\t\tself.data = loads(''.join(map_file.readlines()))\n")
-        file.write(f"\t\t\tmap_file.close()\n")
+        file.write(f"\t\t\tmap_file.close()\n\n")
+
         file.write(f"\t\tenemy_spawn_data = self.data['enemy_spawn_data']\n")
         file.write(f"\t\tself.enemy_data = generate_enemies(self.ENEMY_COUNT, enemy_spawn_data)\n\n")
+
+        file.write(f"\t\tforeign_spawn_data = self.data['foreign_spawn_data']\n")
+        file.write(f"\t\tself.foreign_data = generate_objects(self.FOREIGN_COUNT, foreign_spawn_data)\n\n")
+
         file.write(f"\t\tself.data = self.data['map']\n\n")
+
         file.write(f"\t\tself.tiles = [pygame.Surface((1, 1)) for i in range(len(self.data))]\n\n")
 
         file.write(f"\tdef update(self, deltatime: int):\n")
@@ -36,17 +45,24 @@ def save(state_name, state_map, enemy_spawns, enemy_count):
         file.write(f"\t\t\t\tcase 'e':\n\t\t\t\t\tcolor = (48,  42,  34)  # Enemy spawn point\n")
         file.write(f"\t\t\t\tcase 'p':\n\t\t\t\t\tcolor = (253, 253, 253) # Player spawn point\n")
         file.write(f"\t\t\t\tcase 'n':\n\t\t\t\t\tcolor = (20,  22,  30)  # Nothing\n\n")
+
         file.write(f"\t\t\tself.tiles[tile_count].fill(color)\n")
         file.write(f"\t\t\tcanvas.blit(self.tiles[tile_count], (x, y))\n\n")
+
         file.write(f"\t\t\tx += 1\n")
         file.write(f"\t\t\tif tile_count%160 == 0 and tile_count != 0:\n")
         file.write(f"\t\t\t\ty += 1\n")
         file.write(f"\t\t\t\tx = 0\n\n")
-        file.write(f"\t\t\ttile_count += 1\n")
+
+        file.write(f"\t\t\ttile_count += 1\n\n")
 
         file.write(f"\t\tenemy_entity: enemy.Enemy\n")
-        file.write(f"\t\tfor enemy_entity in self.enemy_data:")
-        file.write(f"\t\t\tenemy_entity.draw(canvas)\n")
+        file.write(f"\t\tfor enemy_entity in self.enemy_data:\n")
+        file.write(f"\t\t\tenemy_entity.draw(canvas)\n\n")
+
+        file.write(f"\t\tforeign_entity: foreign.Foreign\n")
+        file.write(f"\t\tfor foreign_entity in self.foreign_data:\n")
+        file.write(f"\t\t\tforeign_entity.render(canvas)\n\n")
 
         # TODO {DANIEL ZHELEZNOV}: MAKE A WAY FOR THE PLAYER TO SEE IF THEY ARE OVER OIL/NEAR FOREIGN
 
