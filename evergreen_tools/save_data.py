@@ -1,9 +1,9 @@
 from json import dump
 
-def save(state_name, state_map):
+def save(state_name, state_map, enemy_spawns, enemy_count):
     with open(f"custom_states/{state_name}.json", "w+") as json_file:
         print(f"Saving to custom_states/{state_name}.json")
-        dump({"map": state_map}, json_file)
+        dump({"enemy_spawn_data": enemy_spawns, "map": state_map}, json_file)
         print(f"Saved to custom_states/{state_name}.json")
 
     with open(f"custom_states/__init__.py", "a+") as file:
@@ -11,11 +11,15 @@ def save(state_name, state_map):
 
         file.write(f"\nclass {state_name}(State):\n")
         file.write("\tdef __init__(self, game: Game, player):\n")
+        file.write(f"\t\tself.ENEMY_COUNT = {enemy_count}\n\n")
         file.write("\t\tsuper().__init__(game)\n\t\tself.player = player\n\n")
         file.write(f"\t\tself.data = []\n")
         file.write(f"\t\twith open('custom_states/{state_name}.json', 'r') as map_file:\n")
         file.write(f"\t\t\tself.data = loads(''.join(map_file.readlines()))\n")
-        file.write(f"\t\t\tmap_file.close()\n\t\tself.data = self.data['map']\n\n")
+        file.write(f"\t\t\tmap_file.close()\n")
+        file.write(f"\t\tenemy_spawn_data = self.data['enemy_spawn_data']\n")
+        file.write(f"\t\tself.enemy_data = generate_enemies(self.ENEMY_COUNT, enemy_spawn_data)\n\n")
+        file.write(f"\t\tself.data = self.data['map']\n\n")
         file.write(f"\t\tself.tiles = [pygame.Surface((1, 1)) for i in range(len(self.data))]\n\n")
 
         file.write(f"\tdef update(self, deltatime: int):\n")
@@ -39,6 +43,10 @@ def save(state_name, state_map):
         file.write(f"\t\t\t\ty += 1\n")
         file.write(f"\t\t\t\tx = 0\n\n")
         file.write(f"\t\t\ttile_count += 1\n")
+
+        file.write(f"\t\tenemy_entity: enemy.Enemy\n")
+        file.write(f"\t\tfor enemy_entity in self.enemy_data:")
+        file.write(f"\t\t\tenemy_entity.draw(canvas)\n")
 
         # TODO {DANIEL ZHELEZNOV}: MAKE A WAY FOR THE PLAYER TO SEE IF THEY ARE OVER OIL/NEAR FOREIGN
 

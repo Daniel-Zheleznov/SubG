@@ -9,7 +9,16 @@ def check_valid(string):
             return False
         i += 1
 
-    return True    
+    return True
+
+def check_valid_int(string):
+    i = 0
+    while i < len(string):
+        if not string[i].isnumeric():
+            return False
+        i += 1
+
+    return True
 
 def cmd_help():
     print("e <tile-descriptor> <new-tile-info> - Edit a tile")
@@ -24,12 +33,18 @@ def cmd_help():
     print("                      p - Player spawn point")
     print("                      n - Nothing/Base")
 
-def shell(state_name:str, state_map = None):
+def shell(state_name:str, state_map = None, enemy_spawns = None, enemy_count = None):
     running = True
 
     if state_map is None:
         state_map = ['n' for i in range(160*90)]
         state_map.append('n')
+    
+    if enemy_spawns is None:
+        enemy_spawns = []
+    
+    if enemy_count is None:
+        enemy_count = 0
 
     os.system('cls' if os.name == 'nt' else 'clear')
     print(f"Evergreen level editor shell\n\n{state_name}")
@@ -59,10 +74,13 @@ def shell(state_name:str, state_map = None):
                 continue
 
             # doing it
+            if cmdline[2].lower() == 'e':
+                enemy_spawns.append([int(cmdline[1][0]), int(cmdline[1][1])])
+
             state_map[(int(cmdline[1][1])*160) + int(cmdline[1][0])] = cmdline[2].lower()
 
         if cmd.lower() == 's':
-            save_data.save(state_name, state_map)
+            save_data.save(state_name, state_map, enemy_spawns, enemy_count)
 
         if cmd.lower() == 'd':
             x, y = 0, 0
@@ -98,5 +116,12 @@ def create_new():
         time.sleep(1)
         create_new()
 
-    shell(state_name)
+    enemy_count = input("Enemy count: ")
+    if check_valid_int(enemy_count) == False:
+        print("Retry. Invalid enemy count")
+        time.sleep(1)
+        create_new()
+
+
+    shell(state_name, enemy_count=enemy_count)
     
