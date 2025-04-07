@@ -9,8 +9,7 @@ class Game:
 
         pygame.display.set_caption("An Evergreen window")
 
-        self.__states = []
-        self.__current_state = None
+        self.states = []
 
         self.actions = {
             "UP": False,
@@ -22,6 +21,9 @@ class Game:
 
         self.data = {}
 
+    def add_state(self, state):
+        self.states.append(state)
+
     def run(self, fps: int = 60):
         running = True
 
@@ -29,14 +31,14 @@ class Game:
         while running:
             self.__window.fill("midnightblue")
 
-            if self.__current_state != None:
-                self.__states[self.__current_state].update(dt)
+            if self.states != []:
+                self.states[-1].update(dt)
 
                 canvas = pygame.Surface((160, 90))
-                self.__states[self.__current_state].render(canvas)
+                self.states[-1].draw(canvas)
 
-                pygame.transform.scale(canvas, self.__window.get_size(), canvas)
-                self.__window.blit(canvas)
+                canvas = pygame.transform.scale(canvas, self.__window.get_size())
+                self.__window.blit(canvas, (0, 0))
 
             dt = self.__timer.tick(fps)
             pygame.display.update()
@@ -84,16 +86,8 @@ class Game:
 
 
 class State:
-    def __init__(self, game: Game, canvas_size: list[int]):
+    def __init__(self, game: Game):
         self.game = game
-
-    def add_state(self):
-        self.game.__states.append(self)
-        self.game.__current_state += 1
-
-    def remove_state(self):
-        self.game.__states.pop()
-        self.game.__current_state -= 1
 
     def update(self, deltatime: int):
         pass
