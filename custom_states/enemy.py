@@ -1,8 +1,8 @@
 import pygame
 from evergreen import  *
 
-ENEMY_BLUE = (0, 0, 255)
-ENEMY_RED = (255, 0, 0)
+ENEMY_STATE_ACTIVE = 0
+ENEMY_STATE_DEAD   = 1
 
 class Enemy:
     ##inital paramtiztaion for emeny
@@ -18,8 +18,10 @@ class Enemy:
         self.x            = inital_x
         self.y            = inital_y
         
-        self.state_color  = ENEMY_RED
+        self.state        = ENEMY_STATE_ACTIVE
         self.alive        = True
+
+        self.enemy_img    = pygame.image.load("custom_states\\assets\\enemy.png")
     
     ##enemy takes damage
     def take_damage(self, damage):
@@ -33,15 +35,17 @@ class Enemy:
     def createDrop(self, alive):
         if self.health<=0:
             self.alive = False
-            self.state_color = ENEMY_BLUE
+            self.state = ENEMY_STATE_DEAD
     ##boundaries for enemy
     
     ##draw enemy and give him boundaries
-    def draw(self, canvas):
+    def draw(self, canvas: pygame.Surface):
         if self.alive==True:
             self.enemyMoving() # TODO {Jonathan W.}: Timer on the movement of the enemy 
 
-            pygame.draw.rect(canvas, self.state_color, (self.x, self.y, self.width, self.height))
+            if self.state == ENEMY_STATE_ACTIVE:
+                canvas.blit(self.enemy_img, (self.x, self.y))
+            # pygame.draw.rect(canvas, self.state_color, (self.x, self.y, self.width, self.height))
     
         
     def enemyMoving(self):
